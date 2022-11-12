@@ -1,0 +1,401 @@
+[
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Introducción al Análisis Territorial en R",
+    "section": "",
+    "text": "Contenidos teóricos\n\n\nAspectos generales\n\n\n\n\n\n\nnull\n\n\n\n\n\n\n\n\nPresentaciones\n\n\n\n\n\n\n\n\n\n[object Object],[object Object],[object Object],[object Object]\n\n\n\n\n\n\nNo hay resultados"
+  },
+  {
+    "objectID": "press/press_class_02_ana_puntos.html#apertura-de-datos",
+    "href": "press/press_class_02_ana_puntos.html#apertura-de-datos",
+    "title": "Análisis de puntos",
+    "section": "Apertura de datos",
+    "text": "Apertura de datos\nSe cargan los datos previamente guardados de accidentes de tránsito en Heredia. Recuerde cargar las librerías sf, sp y rgdal.\n\nact.sp.401 <- read_sf(\"./datos/shp/actsp401.shp\")"
+  },
+  {
+    "objectID": "press/press_class_02_ana_puntos.html#objeto-de-patrón-de-puntos",
+    "href": "press/press_class_02_ana_puntos.html#objeto-de-patrón-de-puntos",
+    "title": "Análisis de puntos",
+    "section": "Objeto de patrón de puntos",
+    "text": "Objeto de patrón de puntos\nAhora podemos usar la función ppp, en spatstat, para crear el objeto de patrón de puntos:\n\n\n\nacc.ppp <- ppp(x=st_coordinates(act.sp.401)[,1],\n               y=st_coordinates(act.sp.401)[,2],\n               window=window)\n\n\n\n\n\n\n\nFigura 1: Objeto puntos de accidentes de tránsito."
+  },
+  {
+    "objectID": "press/press_class_02_ana_puntos.html#intensidad-y-densidad",
+    "href": "press/press_class_02_ana_puntos.html#intensidad-y-densidad",
+    "title": "Análisis de puntos",
+    "section": "Intensidad y densidad",
+    "text": "Intensidad y densidad\nUna información crucial que necesitamos cuando tratamos con patrones de puntos es una definición cuantitativa de la distribución espacial, es decir, cuántos eventos tenemos en una ventana predefinida. El índice para definir esto es la Intensidad, que es el número promedio de eventos por unidad de área.\nPodemos calcular la intensidad de la siguiente manera:\n\nacc.ppp$n/sum(st_area(heredia))\n\n0.00005973704 [1/m^2]"
+  },
+  {
+    "objectID": "press/press_class_02_ana_puntos.html#dato-de-intensidad",
+    "href": "press/press_class_02_ana_puntos.html#dato-de-intensidad",
+    "title": "Análisis de puntos",
+    "section": "Dato de intensidad",
+    "text": "Dato de intensidad\nEl numerador es el número de punto en el objeto ppp; mientras que el denominador es la suma de las áreas de todos los polígonos. En Heredia, la intensidad promedio de accidentes es de 59.737 por kilómetro cuadrado."
+  },
+  {
+    "objectID": "press/press_class_02_ana_puntos.html#observación",
+    "href": "press/press_class_02_ana_puntos.html#observación",
+    "title": "Análisis de puntos",
+    "section": "Observación",
+    "text": "Observación\nLa intensidad puede ser constante a lo largo de la ventana de estudio, en ese caso, en cada metro cuadrado encontraríamos el mismo número de puntos, y el proceso sería uniforme o homogéneo. La mayoría de las veces, la intensidad no es constante y varía espacialmente a lo largo de la ventana del estudio, en ese caso el proceso no es homogéneo. Para procesos no homogéneos necesitamos una forma de determinar la cantidad de variación espacial de la intensidad."
+  },
+  {
+    "objectID": "press/press_class_02_ana_puntos.html#conteo-de-cuadrantes",
+    "href": "press/press_class_02_ana_puntos.html#conteo-de-cuadrantes",
+    "title": "Análisis de puntos",
+    "section": "Conteo de cuadrantes",
+    "text": "Conteo de cuadrantes\nHay varias formas de tratar este problema, un ejemplo es el conteo de cuadrantes, donde el área se divide en rectángulos y se cuenta el número de eventos en cada uno de ellos:\n\nplot(acc.ppp,pch=\"+\",cex=0.5,\n     main=\"Heredia: Accidentes de tránsito\")\nplot(quadratcount(acc.ppp, nx = 4, ny = 4), add=T,col=\"blue\")"
+  },
+  {
+    "objectID": "press/press_class_02_ana_puntos.html#accidentes-por-distrito",
+    "href": "press/press_class_02_ana_puntos.html#accidentes-por-distrito",
+    "title": "Análisis de puntos",
+    "section": "Accidentes por distrito",
+    "text": "Accidentes por distrito\nEsta función es buena para ciertos conjuntos de datos, pero en este caso realmente no tiene sentido usar el recuento de cuadrantes, ya que las áreas que crea no tienen ningún significado en la realidad. Por ejemplo, sería mucho más valioso extraer el número de accidentes por distrito. Para hacer esto necesitamos usar un bucle e iterar a través de los polígonos:\n\nLocal.Intensidad <- data.frame(heredia=factor(),Number=numeric())\nfor(i in unique(heredia$distrito)){\n  sub.pol <- heredia[heredia$distrito==i,]\n  z=data.frame(cbind(x=acc.ppp$x, y= acc.ppp$y))\n  coordinates(z)<-c(\"x\",\"y\")\n  sub.ppp <- ppp(x=z$x, y=z$y,window=as.owin(sub.pol))\n  Local.Intensidad <- rbind(Local.Intensidad,\n                            data.frame(heredia=factor(i,\n                                                      levels=heredia$distrito),\n                                       Number=sub.ppp$n))\n}"
+  },
+  {
+    "objectID": "press/press_class_02_ana_puntos.html#frecuencia",
+    "href": "press/press_class_02_ana_puntos.html#frecuencia",
+    "title": "Análisis de puntos",
+    "section": "Frecuencia",
+    "text": "Frecuencia\nSe establecen las frecuencias de los accidentes por distrito.\n\nsummary(Local.Intensidad)\n\n          heredia      Number     \n Ulloa        :1   Min.   :152.0  \n San Francisco:1   1st Qu.:275.8  \n Heredia      :1   Median :368.5  \n Mercedes     :1   Mean   :372.5  \n                   3rd Qu.:465.2  \n                   Max.   :601.0  \n\nsum(Local.Intensidad$Number)\n\n[1] 1490"
+  },
+  {
+    "objectID": "press/press_class_02_ana_puntos.html#código-de-gráfico-de-frecuencia",
+    "href": "press/press_class_02_ana_puntos.html#código-de-gráfico-de-frecuencia",
+    "title": "Análisis de puntos",
+    "section": "Código de Gráfico de frecuencia",
+    "text": "Código de Gráfico de frecuencia\n\nlibrary(plotrix)\ncolorScale <- color.scale(Local.Intensidad[order(Local.Intensidad[,2]),2],\n                          color.spec=\"rgb\",\n                          extremes=c(\"green\",\"red\"),alpha=0.8)\n\ndf_sorted <- Local.Intensidad %>% arrange(desc(Number))\n\np<-ggplot(data=df_sorted, aes(x=heredia, y=Number)) +\n  geom_col(aes(color = heredia), fill = \"white\")+\n  scale_fill_manual(colorScale) +\n  geom_text(aes(label = Number), vjust = -0.3) +\n  theme_minimal()"
+  },
+  {
+    "objectID": "press/press_class_02_ana_puntos.html#gráfico-de-frecuencia",
+    "href": "press/press_class_02_ana_puntos.html#gráfico-de-frecuencia",
+    "title": "Análisis de puntos",
+    "section": "Gráfico de frecuencia",
+    "text": "Gráfico de frecuencia\n\np\n\n\nFigura 2: Heredia: Frecuencia de accidentes de tránsito por distrito."
+  },
+  {
+    "objectID": "press/press_class_02_ana_puntos.html#densidad-de-kernel",
+    "href": "press/press_class_02_ana_puntos.html#densidad-de-kernel",
+    "title": "Análisis de puntos",
+    "section": "Densidad de Kernel",
+    "text": "Densidad de Kernel\nOtra forma en la que podemos determinar la distribución espacial de la intensidad es mediante el uso del suavizado del kernel (Diggle 1990; Berman 1986; Berman, Scientific, y Diggle 1989; Bivand, Pebesma, y Gómez-Rubio 2013). Dicho método calcula la intensidad de forma continua en toda el área de estudio. Para realizar este análisis en R necesitamos definir el ancho de banda de la estimación de densidad, que básicamente determina el área de influencia de la estimación. No hay una regla general para determinar el ancho de banda correcto."
+  },
+  {
+    "objectID": "press/press_class_02_ana_puntos.html#densidad-de-kernel-1",
+    "href": "press/press_class_02_ana_puntos.html#densidad-de-kernel-1",
+    "title": "Análisis de puntos",
+    "section": "Densidad de Kernel",
+    "text": "Densidad de Kernel\nEn general, si h es demasiado pequeño, la estimación es demasiado ruidosa, mientras que si h es demasiado alta, la estimación puede pasar por alto elementos cruciales del patrón de puntos debido a exceso de suavisado (Scott 2009). En spatstat, las funciones bw.diggle, bw.ppl y bw.scott se pueden usar para estimar el ancho de banda según los métodos de diferencia. Podemos probar cómo funcionan con nuestro conjunto de datos utilizando el siguiente código:"
+  },
+  {
+    "objectID": "press/press_class_02_ana_puntos.html#densidad-de-kernel-01",
+    "href": "press/press_class_02_ana_puntos.html#densidad-de-kernel-01",
+    "title": "Análisis de puntos",
+    "section": "Densidad de Kernel 01",
+    "text": "Densidad de Kernel 01\n\nplot(density.ppp(acc.ppp, \n                 sigma = bw.diggle(acc.ppp),edge=T),\n     main=paste(\"h =\", round(bw.diggle(acc.ppp),2)))\n\n\nFigura 3: Heredia: Densidad de accidentes de tránsito por distrito."
+  },
+  {
+    "objectID": "press/press_class_02_ana_puntos.html#densidad-de-kernel-02",
+    "href": "press/press_class_02_ana_puntos.html#densidad-de-kernel-02",
+    "title": "Análisis de puntos",
+    "section": "Densidad de Kernel 02",
+    "text": "Densidad de Kernel 02\n\nplot(density.ppp(acc.ppp, \n                 sigma = bw.ppl(acc.ppp), edge=T),\n     main=paste(\"h =\", round(bw.ppl(acc.ppp),2)))\n\n\nFigura 4: Heredia: Densidad de accidentes de tránsito por distrito."
+  },
+  {
+    "objectID": "press/press_class_02_ana_puntos.html#densidad-de-kernel-03",
+    "href": "press/press_class_02_ana_puntos.html#densidad-de-kernel-03",
+    "title": "Análisis de puntos",
+    "section": "Densidad de Kernel 03",
+    "text": "Densidad de Kernel 03\n\nplot(density.ppp(acc.ppp, \n                 sigma = bw.scott(acc.ppp)[2], edge=T),\n     main=paste(\"h =\", round(bw.scott(acc.ppp)[2],2)))\n\n\nFigura 5: Heredia: Densidad de accidentes de tránsito por distrito."
+  },
+  {
+    "objectID": "press/press_class_02_ana_puntos.html#densidad-de-kernel-04",
+    "href": "press/press_class_02_ana_puntos.html#densidad-de-kernel-04",
+    "title": "Análisis de puntos",
+    "section": "Densidad de Kernel 04",
+    "text": "Densidad de Kernel 04\n\nplot(density.ppp(acc.ppp, \n                 sigma = bw.scott(acc.ppp)[1],edge=T),\n     main=paste(\"h =\", round(bw.scott(acc.ppp)[1],2)))\n\n\nFigura 6: Heredia: Densidad de accidentes de tránsito por distrito."
+  },
+  {
+    "objectID": "press/press_class_02_ana_puntos.html#muchas-gracias",
+    "href": "press/press_class_02_ana_puntos.html#muchas-gracias",
+    "title": "Análisis de puntos",
+    "section": "Muchas gracias",
+    "text": "Muchas gracias"
+  },
+  {
+    "objectID": "press/press_class_02_ana_puntos.html#referencias",
+    "href": "press/press_class_02_ana_puntos.html#referencias",
+    "title": "Análisis de puntos",
+    "section": "Referencias",
+    "text": "Referencias\n\n\n\nEscuela de Ciencias Geográficas, UNA.\n\n\n\nBerman, Mark. 1986. «Testing for Spatial Association Between a Point Process and Another Stochastic Process». Journal of the Royal Statistical Society. Series C (Applied Statistics) 35 (1): 54-62. http://www.jstor.org/stable/2347865.\n\n\nBerman, Mark, The Commonwealth Scientific, y Peter Diggle. 1989. «Estimating Weighted Integrals of the Second-Order Intensity of a Spatial Point Process», n.º April 2015. https://doi.org/10.1111/j.2517-6161.1989.tb01750.x.\n\n\nBivand, Roger S., Edzer Pebesma, y Virgilio Gómez-Rubio. 2013. «Classes for Spatial Data in R». Applied Spatial Data Analysis with R, 21-57. https://doi.org/10.1007/978-1-4614-7618-4_2.\n\n\nDiggle, Peter J. 1990. «A Point Process Modelling Approach to Raised Incidence of a Rare Phenomenon in the Vicinity of a Prespecified Point». Journal of the Royal Statistical Society. Series A (Statistics in Society) 153 (3): 349-62. http://www.jstor.org/stable/2982977.\n\n\nScott, David W. 2009. Multivariate Density Estimation: Theory, Practice, and Visualization. Wiley Series en Probability y Statistics. Wiley. https://doi.org/10.1002/9781118575574."
+  },
+  {
+    "objectID": "press/press_class_03_rasters.html#librerias-para-rasters",
+    "href": "press/press_class_03_rasters.html#librerias-para-rasters",
+    "title": "Análisis de rasters",
+    "section": "Librerias para rasters",
+    "text": "Librerias para rasters\nEn el caso de los rasters, se utiliza las librerías raster, rasterVis y latticeExtra.\n\nlibrary(raster)\nlibrary(ggplot2)\nlibrary(rasterVis)\nlibrary(RStoolbox)\nlibrary(latticeExtra)"
+  },
+  {
+    "objectID": "press/press_class_03_rasters.html#el-raster",
+    "href": "press/press_class_03_rasters.html#el-raster",
+    "title": "Análisis de rasters",
+    "section": "El raster",
+    "text": "El raster\nSe carga una imagen Landsat 8, previamente ajustada al área de estudio. Esto por una situación del tamaño del archivo. La imagen solo presenta las bandas del sensor OLI.\n\noli <- brick(\"./datos/ras/aoi_lc08_20190217_oli.tif\")\netm2 <- oli[[2]] # Solo banda azul\netm3 <- oli[[3]] # Solo banda verde\netm4 <- oli[[4]] # Solo banda roja"
+  },
+  {
+    "objectID": "press/press_class_03_rasters.html#despliegue-del-raster-rgb",
+    "href": "press/press_class_03_rasters.html#despliegue-del-raster-rgb",
+    "title": "Análisis de rasters",
+    "section": "Despliegue del raster RGB",
+    "text": "Despliegue del raster RGB\nEs posible realizar una composición RGB del raster. Se prepara el código.\n\nplt.ras01 <- ggRGB(oli,\n                   r = 4,\n                   g = 3,\n                   b = 2,\n                   stretch = \"lin\",\n                   coord_equal = TRUE) +\n      labs( y = \"Coordenadas métricas y\", x = \"Coordenadas métricas x\") +\n      #labs(y = \"Latitud\", x = \"Longitud\") +\n      #coord_sf(crs = 8908) +\n      theme_bw()"
+  },
+  {
+    "objectID": "press/press_class_03_rasters.html#visualización",
+    "href": "press/press_class_03_rasters.html#visualización",
+    "title": "Análisis de rasters",
+    "section": "Visualización",
+    "text": "Visualización\n\nplt.ras01\n\n\nFigura 1: Área de estudio: Imagen Landsat 8 (UTM 16N)."
+  },
+  {
+    "objectID": "press/press_class_03_rasters.html#ndvi",
+    "href": "press/press_class_03_rasters.html#ndvi",
+    "title": "Análisis de rasters",
+    "section": "NDVI",
+    "text": "NDVI\nEl índice de vegetación de diferencia normalizada (NDVI) es un conjunto calculado de valores entre uno negativo y uno positivo que indican el nivel de vegetación fotosintética. El NDVI se calcula combinando las bandas roja e infrarroja cercana mediante la siguiente fórmula:\n\\[NDVI = \\frac{(NIR - Rojo)}{(NIR + Rojo)}\\]\nDonde: NIR: luz reflejada en el espectro infrarrojo cercano. Rojo: luz reflejada en el espectro rojo."
+  },
+  {
+    "objectID": "press/press_class_03_rasters.html#rango-del-ndvi",
+    "href": "press/press_class_03_rasters.html#rango-del-ndvi",
+    "title": "Análisis de rasters",
+    "section": "Rango del NDVI",
+    "text": "Rango del NDVI\nEl rango del NDVI es de \\(\\{-1 : 1\\}\\).\n\n\n\n\n\n\n\nValor\nDescripción\n\n\n\n\n\\(0.6 : 0.8\\)\nIndican bosques templados y tropicales.\n\n\n\\(0.2 : 0.3\\)\nRepresentan arbustos y praderas.\n\n\n\\(0.1 \\leq\\)\nPoca vegetación, rocas, suelo desnudo.\n\n\n\\(-1 : 0\\)\nValores negativos indican: sin cobertura vegetal, puede ser nubes, agua o nieve."
+  },
+  {
+    "objectID": "press/press_class_03_rasters.html#cálculo-del-ndvi",
+    "href": "press/press_class_03_rasters.html#cálculo-del-ndvi",
+    "title": "Análisis de rasters",
+    "section": "Cálculo del NDVI",
+    "text": "Cálculo del NDVI\nSe seleccionan solo las bandas Roja y NIR de la imagen.\n\nlibrary(ggspatial)\nred <- oli[[4]]\nnir <- oli[[5]]\n\nndvi <- (nir - red) / (nir + red)"
+  },
+  {
+    "objectID": "press/press_class_03_rasters.html#visualización-del-ndvi",
+    "href": "press/press_class_03_rasters.html#visualización-del-ndvi",
+    "title": "Análisis de rasters",
+    "section": "Visualización del NDVI",
+    "text": "Visualización del NDVI\n\nggplot() + \n  layer_spatial(ndvi, aes(fill = stat(band1))) +\n  scale_fill_viridis_c(na.value = NA) +\n  labs(fill = \"NDVI\") +\n  theme_bw()\n\n\nFigura 2: AOI: NDVI del Landsat 8 RGB (UTM 16N)."
+  },
+  {
+    "objectID": "press/press_class_03_rasters.html#estadísticas-del-raster",
+    "href": "press/press_class_03_rasters.html#estadísticas-del-raster",
+    "title": "Análisis de rasters",
+    "section": "Estadísticas del raster",
+    "text": "Estadísticas del raster\nEl rango de NDVI es de -1 a +1, aunque los valores de NDVI generalmente estarán en un área pequeña en el medio del rango potencial completo de -1 a +1. Puede usar esta información para ajustar el parámetro zlim para distribuir los valores de color y hacerlos legibles.\n\ndat.ndvi <- as.data.frame(ndvi)\n#str(dat.ndvi)\nggplot(data=dat.ndvi, aes(x= layer)) +\n  geom_histogram(binwidth = 0.05, color=\"darkblue\", fill=\"lightblue\") +\n  labs(x = \"Valores NDVI\", y = \"Frecuencia\" ) +\n  theme_classic()\n\n\nFigura 3: Histograma del NDVI"
+  },
+  {
+    "objectID": "press/press_class_03_rasters.html#escritura-del-nuevo-raster-ndvi",
+    "href": "press/press_class_03_rasters.html#escritura-del-nuevo-raster-ndvi",
+    "title": "Análisis de rasters",
+    "section": "Escritura del nuevo raster NDVI",
+    "text": "Escritura del nuevo raster NDVI\nSi la imagen no existe, se guarda la imagen resultante en disco.\n\n#Revisa si la carpeta para guardar la salida existe\nfolder <- \"./datos/ras/\"\nif (file.exists(folder)) {\n  cat(\"La carpeta ya existe! \\n\")\n} else {\n  dir.create(folder)\n}\n\n#Revisa si el archivo raster de salida existe\nfname.ndvi <- \"./datos/ras/aoi_l08_20190217_ndvi.bil\"\nif (!file.exists(fname.ndvi)){\n  rgb.level <- writeRaster(ndvi, filename = fname.ndvi,\n                           datatype='FLT4S', bandorder='BIL', overwrite=TRUE)\n} else {\n  cat(\"El archivo raster ya existe! \\n\")\n}"
+  },
+  {
+    "objectID": "press/press_class_03_rasters.html#es-posible-la-interactividad",
+    "href": "press/press_class_03_rasters.html#es-posible-la-interactividad",
+    "title": "Análisis de rasters",
+    "section": "¿Es posible la interactividad?",
+    "text": "¿Es posible la interactividad?\nDado que el objetivo del análisis del NDVI suele ser saber qué sucede en una ubicación específica o en un conjunto de ubicaciones, puede ser útil trazar el NDVI con un mapa base que brinde un contexto geográfico a los datos:\n\nlibrary(leaflet)\nmap = leaflet()\nmap = addTiles(map)\n\npalette = colorBin(c(\"red3\", \"white\", \"darkcyan\"), values(ndvi))\nmap = addRasterImage(map, ndvi, palette, opacity=0.7)\nmap = addLegend(map, pal=palette, values=values(ndvi), title=\"NDVI\")"
+  },
+  {
+    "objectID": "press/press_class_03_rasters.html#el-mapa-interactivo",
+    "href": "press/press_class_03_rasters.html#el-mapa-interactivo",
+    "title": "Análisis de rasters",
+    "section": "El mapa interactivo",
+    "text": "El mapa interactivo\n\nmap"
+  },
+  {
+    "objectID": "press/press_class_03_rasters.html#muchas-gracias",
+    "href": "press/press_class_03_rasters.html#muchas-gracias",
+    "title": "Análisis de rasters",
+    "section": "Muchas gracias",
+    "text": "Muchas gracias\n\n\n\nEscuela de Ciencias Geográficas, UNA."
+  },
+  {
+    "objectID": "press/press_class_introR.html#la-ciencia-abierta",
+    "href": "press/press_class_introR.html#la-ciencia-abierta",
+    "title": "Introducción a R",
+    "section": "La “Ciencia abierta”",
+    "text": "La “Ciencia abierta”\nEs la práctica de la ciencia de tal manera que otros pueden colaborar y contribuir.\n\nComunidades de investigación"
+  },
+  {
+    "objectID": "press/press_class_introR.html#qué-es-r",
+    "href": "press/press_class_introR.html#qué-es-r",
+    "title": "Introducción a R",
+    "section": "¿Qué es R?",
+    "text": "¿Qué es R?\nR es un programa libre para computación estadística y gráficos (R Core Team 2022)."
+  },
+  {
+    "objectID": "press/press_class_introR.html#por-qué-usar-r",
+    "href": "press/press_class_introR.html#por-qué-usar-r",
+    "title": "Introducción a R",
+    "section": "¿Por qué usar R?",
+    "text": "¿Por qué usar R?\n\n\n\nMétodos reproducibles y replicables.\nEs abierto y libre.\nGran comunidad.\nForma parte de un gran ecosistema.\n\n\n\n\n\n\nOpciones que ofrece la reproducibilidad. Fuente: Foster Open Science."
+  },
+  {
+    "objectID": "press/press_class_introR.html#las-librerías",
+    "href": "press/press_class_introR.html#las-librerías",
+    "title": "Introducción a R",
+    "section": "Las librerías",
+    "text": "Las librerías\nUna de las mayores virtudes de R es la enorme comunidad de desarrollo que ha creado funcionalidades (funciones) para simplificar el trabajo a otras personas. La estructura que almacena funciones se conoce como librería o paquete.\nExisten dos tipos de librerías en R:\n\nLibrerías base: Incorporadas en la instalación básica.\nLibrerías por contribución: Creadas por usuarios y responden a sus necesidades. Estos necesitan ser descargados y cargados."
+  },
+  {
+    "objectID": "press/press_class_introR.html#dónde-se-consiguen-las-librerías",
+    "href": "press/press_class_introR.html#dónde-se-consiguen-las-librerías",
+    "title": "Introducción a R",
+    "section": "¿Dónde se consiguen las librerías?",
+    "text": "¿Dónde se consiguen las librerías?\n\nCRAN (de Comprehensive R Archive Network en inglés), el repositorio oficial de R. Solo los paquetes aprobados y con soporte de fallos constante son publicados aquí.\nGitHub, el repositorio más grande no oficial en el que se pueden encontrar paquetes de R. Muchos repositorios en CRAN mantienen versiones beta en GitHub para su prueba antes de ser publicados."
+  },
+  {
+    "objectID": "press/press_class_introR.html#cómo-citar-una-librería",
+    "href": "press/press_class_introR.html#cómo-citar-una-librería",
+    "title": "Introducción a R",
+    "section": "¿Cómo citar una librería?",
+    "text": "¿Cómo citar una librería?\nEs muy fácil citar una librería. La forma más fácil es mediante el comando citation(). Por ejemplo, para citar el programa R.\n\ncitation()\n\n\nTo cite R in publications use:\n\n  R Core Team (2022). R: A language and environment for statistical\n  computing. R Foundation for Statistical Computing, Vienna, Austria.\n  URL https://www.R-project.org/.\n\nA BibTeX entry for LaTeX users is\n\n  @Manual{,\n    title = {R: A Language and Environment for Statistical Computing},\n    author = {{R Core Team}},\n    organization = {R Foundation for Statistical Computing},\n    address = {Vienna, Austria},\n    year = {2022},\n    url = {https://www.R-project.org/},\n  }\n\nWe have invested a lot of time and effort in creating R, please cite it\nwhen using it for data analysis. See also 'citation(\"pkgname\")' for\nciting R packages."
+  },
+  {
+    "objectID": "press/press_class_introR.html#librerías-para-el-análisis-espacial",
+    "href": "press/press_class_introR.html#librerías-para-el-análisis-espacial",
+    "title": "Introducción a R",
+    "section": "Librerías para el Análisis espacial",
+    "text": "Librerías para el Análisis espacial\nEn mi opinión, las principales librerías para el manejo de datos espaciales son:\n\nRgdal\nsf\nsp\ngstats\nraster\n\nAunque existen, muchas otras más …."
+  },
+  {
+    "objectID": "press/press_class_introR.html#los-editores",
+    "href": "press/press_class_introR.html#los-editores",
+    "title": "Introducción a R",
+    "section": "Los Editores",
+    "text": "Los Editores\nR en realidad mantiene una consola GUI (graphical user interface) básica. Para mejorar la interacción con los usuarios, es común el uso de editores, también conocidos como IDEs (Source code editor).\nEl más utilizado es RStudio IDE."
+  },
+  {
+    "objectID": "press/press_class_introR.html#sobre-el-taller",
+    "href": "press/press_class_introR.html#sobre-el-taller",
+    "title": "Introducción a R",
+    "section": "Sobre el taller",
+    "text": "Sobre el taller\nEste taller es de carácter introductorio, y se espera abordar:\n\nuso básico de Quarto,\napertura de tablas de datos, datos espaciales: (puntos, líneas, polígonos y rasters)\nTratamiento básico datos espaciales,\nvisualización básica"
+  },
+  {
+    "objectID": "press/press_class_introR.html#referencias",
+    "href": "press/press_class_introR.html#referencias",
+    "title": "Introducción a R",
+    "section": "Referencias",
+    "text": "Referencias\n\n\n\nEscuela de Ciencias Geográficas, UNA.\n\n\n\nR Core Team. 2022. R: A Language and Environment for Statistical Computing. Vienna, Austria: R Foundation for Statistical Computing. https://www.R-project.org/."
+  },
+  {
+    "objectID": "press/press_class_01_dat_puntuales.html#apertura-de-tabla-de-datos",
+    "href": "press/press_class_01_dat_puntuales.html#apertura-de-tabla-de-datos",
+    "title": "Datos espaciales en R",
+    "section": "Apertura de tabla de datos",
+    "text": "Apertura de tabla de datos\nEn R es posible cargar una tabla de datos con múltiples variables a estas se les conoce como data.frame(). Es importante conocer algunos detalles de la tabla de datos.\n\naccidentes <- read.csv(\"./datos/COSEVI_accidentes_complete.csv\",\n                       fileEncoding=\"utf8\",\n                       sep = \",\", # Separador de campos\n                       dec = \".\", # Simbolo decimal\n                       header = TRUE, # Tabla tiene encabezados?\n                       na.strings = \"NA\")"
+  },
+  {
+    "objectID": "press/press_class_01_dat_puntuales.html#librerias-para-datos-espaciales",
+    "href": "press/press_class_01_dat_puntuales.html#librerias-para-datos-espaciales",
+    "title": "Datos espaciales en R",
+    "section": "Librerias para datos espaciales",
+    "text": "Librerias para datos espaciales\nEn R es posible abrir diversos tipos de datos espaciales. Primero se va a cargar las siguientes librerías:\n\nlibrary(sf)\nlibrary(sp)\nlibrary(rgdal)\n#Otras librerias\nlibrary(tidyverse)\nlibrary(ggplot2)"
+  },
+  {
+    "objectID": "press/press_class_01_dat_puntuales.html#datos-puntuales-referenciados",
+    "href": "press/press_class_01_dat_puntuales.html#datos-puntuales-referenciados",
+    "title": "Datos espaciales en R",
+    "section": "Datos puntuales referenciados",
+    "text": "Datos puntuales referenciados\nLos datos corresponden a una locación específica (p.e., latitud-longitud; x-y). Pueden ser sitios, eventos, etc. En este caso se usará la tabla de datos de accidentes de tránsito en el Cantón de Heredia.\n\nact.sp <- sf::st_as_sf(accidentes,\n                       coords = c(\"NX_WGS84\",\"NY_WGS84\"))\nst_crs(act.sp) <- 4326 # WGS84 EPSG code 4326"
+  },
+  {
+    "objectID": "press/press_class_01_dat_puntuales.html#polígonos",
+    "href": "press/press_class_01_dat_puntuales.html#polígonos",
+    "title": "Datos espaciales en R",
+    "section": "Polígonos",
+    "text": "Polígonos\nEn este caso podemos cargar los datos shapefile con los límites de distrito de Costa Rica, y descargados del SNIT, y emplear solo un subconjunto de estos. En este caso solo interesa los distritos en la GAM de Heredia (por lo que se excluye el distrito Vara Blanca).\n\ndist <- read_sf(\"./datos/shp/IGN_5_limitedistrital_5k_2021.shp\")\nheredia <- subset(dist,\n                  canton == \"Heredia\" & codigo_dta < 40105)"
+  },
+  {
+    "objectID": "press/press_class_01_dat_puntuales.html#operaciones-básicas-entre-datos-espaciales",
+    "href": "press/press_class_01_dat_puntuales.html#operaciones-básicas-entre-datos-espaciales",
+    "title": "Datos espaciales en R",
+    "section": "Operaciones básicas entre datos espaciales",
+    "text": "Operaciones básicas entre datos espaciales\nEs posible realizar operaciones como una intersección entre capas vectoriales.\n\nproj.dat <- sf::st_crs(act.sp)\nif (proj.dat$input != \"EPSG:8908\"){\n  act.sp <- st_transform(act.sp,8908)  # Proyecta al CR-SIRGAS\n}\nact.sp.401 <- st_intersection(act.sp, heredia)\n#st_crs(heredia)\n\n\n\n\n\n\n\nImportante\n\n\nEn caso de que las capas presenten diferentes proyecciones, se utiliza la condicional if para verificar esa condición, y proyectar la capa de interés en caso de que no cumpla ese criterio."
+  },
+  {
+    "objectID": "press/press_class_01_dat_puntuales.html#visualización-básica",
+    "href": "press/press_class_01_dat_puntuales.html#visualización-básica",
+    "title": "Datos espaciales en R",
+    "section": "Visualización básica",
+    "text": "Visualización básica\nSe crea un mapa básico con los accidentes de tránsito en el Cantón de Heredia y se asigna a una variable para incluso agregar más elementos.\n\nlibrary(ggforce)\nlibrary(ggspatial)\nlibrary(showtext)\n\nplt01 <- ggplot()+\n  annotation_spatial(heredia)+\n  layer_spatial(act.sp.401, aes(col= CodAcc2)) +\n  labs(colour=\"Tipo\") +\n  theme_bw()"
+  },
+  {
+    "objectID": "press/press_class_01_dat_puntuales.html#heredia-mapa-de-accidentes",
+    "href": "press/press_class_01_dat_puntuales.html#heredia-mapa-de-accidentes",
+    "title": "Datos espaciales en R",
+    "section": "Heredia: Mapa de accidentes",
+    "text": "Heredia: Mapa de accidentes\n\nplt01\n\n\nFigura 1: Heredia: Accidentes de tránsito por tipo"
+  },
+  {
+    "objectID": "press/press_class_01_dat_puntuales.html#agrupación-de-datos",
+    "href": "press/press_class_01_dat_puntuales.html#agrupación-de-datos",
+    "title": "Datos espaciales en R",
+    "section": "Agrupación de datos",
+    "text": "Agrupación de datos\nEs posible usar una estrategia de agrupación de los accidentes por medio de K Medias, según la variable total de involucrados:\n\nlibrary(cluster)\n\nacc.clus01 <- kmeans(c(act.sp.401$hora),\n                     4, # Cantidad de grupos\n                     nstart = 20 # Mínimo de elementos en los grupos\n                     )\nacc.clus01\n\nK-means clustering with 4 clusters of sizes 480, 488, 123, 399\n\nCluster means:\n       [,1]\n1 14.758333\n2  8.323770\n3  2.520325\n4 19.889724\n\nClustering vector:\n   [1] 4 2 2 2 1 3 3 3 2 1 2 2 1 2 3 2 4 4 4 2 1 2 4 1 2 3 4 4 3 3 2 2 1 2 3 2 1\n  [38] 2 4 3 1 2 3 4 2 4 3 4 2 1 2 4 4 1 2 1 3 2 4 1 2 4 1 2 2 2 2 1 2 1 4 1 1 2\n  [75] 1 2 4 2 1 2 1 2 4 1 4 4 4 2 1 1 1 4 1 2 2 2 2 4 1 2 2 1 4 4 1 1 1 4 2 2 2\n [112] 4 2 4 4 1 2 4 2 4 2 4 2 2 1 2 2 2 1 2 2 2 2 3 1 2 4 4 2 2 1 2 1 1 4 1 4 1\n [149] 2 4 1 2 1 4 1 2 1 4 2 4 4 2 4 2 1 2 1 4 2 2 1 4 2 1 4 1 2 4 4 2 2 2 2 2 2\n [186] 2 4 1 2 1 2 4 1 4 2 2 2 3 2 2 1 1 2 1 1 4 2 4 2 2 1 2 2 2 1 4 2 2 4 2 4 1\n [223] 1 2 2 4 1 2 2 3 4 4 2 4 4 1 4 2 1 3 3 1 2 1 4 2 3 2 2 4 4 2 4 2 2 1 4 1 4\n [260] 1 1 4 4 4 1 4 2 4 4 2 2 4 4 1 2 3 1 4 1 1 4 2 1 4 2 2 1 4 2 3 2 1 1 2 4 2\n [297] 4 1 2 4 2 2 2 2 4 1 2 3 1 2 2 1 2 1 2 2 2 1 4 4 4 1 2 1 1 3 3 1 1 1 2 2 4\n [334] 2 2 4 3 2 2 1 3 1 1 4 4 3 4 4 1 4 4 2 1 1 4 2 4 4 4 1 1 4 1 1 2 1 4 1 4 1\n [371] 4 1 1 4 4 2 1 4 1 2 4 2 1 1 2 2 2 2 2 2 2 1 2 4 1 1 1 3 3 4 4 2 2 2 1 3 3\n [408] 1 2 3 2 2 4 1 3 1 2 1 4 2 1 3 3 1 1 4 4 4 2 2 2 2 2 4 1 2 1 3 4 1 4 4 1 1\n [445] 4 1 1 4 1 3 3 1 2 3 4 3 1 4 3 4 2 4 1 2 4 4 2 4 2 2 1 1 1 4 2 2 1 1 4 4 1\n [482] 3 4 2 2 1 4 1 2 1 1 4 1 2 4 1 2 2 2 4 2 2 2 1 1 4 2 4 4 4 3 1 4 2 3 3 4 4\n [519] 1 4 2 2 4 2 2 4 1 4 2 4 2 1 1 1 1 4 4 2 2 1 4 4 1 2 1 2 2 3 2 1 4 4 2 2 1\n [556] 1 2 4 4 3 3 4 2 2 2 4 2 4 2 1 4 2 4 1 4 1 1 2 2 2 1 2 4 4 4 4 3 1 2 1 1 4\n [593] 4 1 4 2 4 1 4 4 2 3 2 2 4 3 1 2 1 4 4 2 1 2 1 4 2 1 1 2 2 2 3 3 4 1 4 2 1\n [630] 4 4 2 2 1 2 1 4 3 1 4 1 1 3 2 2 4 2 1 2 4 4 3 4 4 1 4 4 2 2 2 4 4 4 4 1 3\n [667] 1 3 4 3 4 4 4 1 1 4 2 4 4 4 2 1 2 3 2 1 2 4 2 2 4 1 1 2 1 4 1 4 4 2 4 1 4\n [704] 1 4 2 1 4 4 1 4 4 1 2 4 3 2 1 4 2 3 1 2 3 3 2 4 1 4 1 4 4 1 4 4 4 2 2 1 1\n [741] 4 2 2 2 2 2 1 4 2 4 4 1 1 1 1 2 4 2 3 3 4 1 1 1 2 2 1 2 2 4 2 2 1 4 4 4 4\n [778] 1 4 1 4 4 1 2 2 1 2 3 3 1 4 1 1 1 1 2 1 1 2 1 1 1 1 2 4 2 1 4 3 3 3 4 3 3\n [815] 4 4 4 4 2 4 2 2 2 4 1 1 2 1 2 1 4 1 1 2 3 1 4 1 1 1 2 2 1 2 2 1 1 1 4 4 2\n [852] 2 1 4 2 2 1 1 1 2 2 4 1 2 1 1 4 1 1 4 3 3 3 4 2 1 2 2 4 4 2 1 4 3 4 3 4 1\n [889] 4 2 1 1 2 1 2 4 1 3 3 4 3 2 1 4 2 4 1 1 2 1 1 1 1 3 2 1 1 3 4 4 1 1 4 1 2\n [926] 2 1 2 1 4 1 4 1 1 2 1 1 1 2 3 1 2 1 1 2 1 1 4 2 2 2 2 2 2 1 1 2 1 4 1 2 1\n [963] 1 1 1 1 2 4 1 1 1 2 1 2 3 2 1 1 1 2 1 1 4 1 1 4 2 1 1 4 1 2 4 3 4 3 4 4 4\n[1000] 2 1 2 2 2 2 2 2 4 1 1 4 2 2 1 1 3 4 2 4 2 4 1 4 1 1 4 2 1 4 2 1 4 2 1 1 1\n[1037] 1 4 1 3 1 4 1 1 1 2 1 2 2 1 4 1 2 1 1 1 1 2 1 1 3 2 2 1 1 4 4 2 2 2 2 1 2\n[1074] 1 2 2 1 1 2 2 1 1 2 2 1 1 1 3 2 2 1 2 1 2 1 2 2 4 2 1 1 4 1 1 1 2 2 4 1 1\n[1111] 4 4 2 2 1 1 2 2 2 1 3 4 4 4 4 2 3 1 1 1 1 4 2 2 4 1 4 4 4 1 1 1 2 1 1 1 1\n[1148] 4 2 1 2 2 4 2 1 2 4 1 1 1 1 1 4 2 1 2 2 1 4 2 2 2 2 2 2 1 1 1 2 4 1 4 4 4\n[1185] 4 1 3 4 2 2 2 2 2 1 1 4 1 2 3 3 3 3 2 2 3 3 2 3 3 4 4 2 3 3 1 3 4 2 1 2 1\n[1222] 2 1 2 2 1 2 1 1 1 2 4 1 1 2 1 4 2 4 2 2 1 1 1 2 1 2 2 1 4 2 1 1 2 2 1 2 4\n[1259] 1 4 1 1 2 4 1 4 1 2 1 4 4 1 4 1 2 1 2 2 4 1 1 1 2 1 1 4 4 1 4 2 1 2 1 4 1\n[1296] 2 2 1 1 2 3 2 3 1 4 2 2 4 2 4 2 2 2 4 2 4 2 2 4 2 2 4 2 4 4 1 4 1 2 3 4 3\n[1333] 2 1 1 1 4 2 1 1 1 2 4 4 2 1 3 1 1 2 4 3 1 2 4 3 1 4 1 1 4 3 2 2 2 2 1 1 3\n[1370] 2 1 2 2 2 2 1 4 4 2 4 4 2 1 1 4 1 3 4 2 4 2 2 1 4 4 4 3 1 2 3 2 2 4 1 2 4\n[1407] 2 4 2 4 4 2 1 2 2 1 1 3 1 4 4 1 4 4 1 4 1 4 4 2 2 4 2 2 4 1 3 2 2 4 1 4 1\n[1444] 1 2 1 4 1 4 1 4 1 2 1 4 1 1 4 2 3 3 4 4 1 4 3 4 3 2 2 1 2 2 4 2 2 4 1 4 1\n[1481] 4 1 4 4 2 4 1 2 2 1\n\nWithin cluster sum of squares by cluster:\n[1] 1267.9667 1324.8443  480.6992 1209.1479\n (between_SS / total_SS =  91.2 %)\n\nAvailable components:\n\n[1] \"cluster\"      \"centers\"      \"totss\"        \"withinss\"     \"tot.withinss\"\n[6] \"betweenss\"    \"size\"         \"iter\"         \"ifault\""
+  },
+  {
+    "objectID": "press/press_class_01_dat_puntuales.html#proceso-de-clasificación",
+    "href": "press/press_class_01_dat_puntuales.html#proceso-de-clasificación",
+    "title": "Datos espaciales en R",
+    "section": "Proceso de clasificación",
+    "text": "Proceso de clasificación\nEs posible realizar una visualización de la agrupación, junto con otras variables. En este caso Hora del accidente con respecto al Total de Involucrados.\n\nclus <- as.data.frame(st_drop_geometry(act.sp.401[,c(\"hora\",\"Total_Involucrados\")]))\nclusplot(clus[,c(\"hora\",\"Total_Involucrados\")], \n         acc.clus01$cluster,\n         color = TRUE,\n         shade = TRUE,\n         labels = 2,\n         lines = 0,\n         main = \"\")\n\n\nHeredia: Agrupación de accidentes por Hora y Total de Involucrados"
+  },
+  {
+    "objectID": "press/press_class_01_dat_puntuales.html#clasificación-en-la-tabla-de-datos",
+    "href": "press/press_class_01_dat_puntuales.html#clasificación-en-la-tabla-de-datos",
+    "title": "Datos espaciales en R",
+    "section": "Clasificación en la tabla de datos",
+    "text": "Clasificación en la tabla de datos\nEl resultado de un proceso de agrupación posibilita la elaboración de cartografía temática. En este caso se construyen niveles en la categoría.\n\nact.sp.401$cat_hora <- as.factor(acc.clus01$cluster)\nlevels(act.sp.401$cat_hora) <- c(\"Madrugada\",\n                                 \"Matutino\",\n                                 \"Vespertino\",\n                                 \"Nocturno\")"
+  },
+  {
+    "objectID": "press/press_class_01_dat_puntuales.html#visualización-del-resultado-de-la-agrupación.",
+    "href": "press/press_class_01_dat_puntuales.html#visualización-del-resultado-de-la-agrupación.",
+    "title": "Datos espaciales en R",
+    "section": "Visualización del resultado de la agrupación.",
+    "text": "Visualización del resultado de la agrupación.\n\nplt02 <- ggplot()+\n  annotation_spatial(heredia)+\n  layer_spatial(act.sp.401, aes(col= cat_hora)) +\n  labs(colour=\"Tipo Hora\") +\n  theme_bw()"
+  },
+  {
+    "objectID": "press/press_class_01_dat_puntuales.html#heredia-mapa-de-accidentes-por-horario",
+    "href": "press/press_class_01_dat_puntuales.html#heredia-mapa-de-accidentes-por-horario",
+    "title": "Datos espaciales en R",
+    "section": "Heredia: Mapa de accidentes por horario",
+    "text": "Heredia: Mapa de accidentes por horario\n\nplt02\n\n\nFigura 2: Heredia: Accidentes de tránsito agrupado por horario"
+  },
+  {
+    "objectID": "press/press_class_01_dat_puntuales.html#selección-por-atributo",
+    "href": "press/press_class_01_dat_puntuales.html#selección-por-atributo",
+    "title": "Datos espaciales en R",
+    "section": "Selección por atributo",
+    "text": "Selección por atributo\nEs posible solo obtener los datos de accidentes agrupados como nocturno y generar una tabla.\n\nlibrary(knitr)\nact.sp.401.noct <-  act.sp.401 %>% \n  filter(cat_hora == \"Nocturno\")\nkable(head(act.sp.401.noct[,c(\"CodAcc2\",\"hora\",\"cat_hora\")]))\n\n\n\nTabla 1: Accidentes Nocturnos\n\n\n\n\n\n\n\n\nCodAcc2\nhora\ncat_hora\ngeometry\n\n\n\n\nColisión entre vehículos\n21\nNocturno\nPOINT (484447.3 1103424)\n\n\nColisión entre vehículos\n18\nNocturno\nPOINT (485512.7 1103931)\n\n\nColisión entre vehículos\n19\nNocturno\nPOINT (483727 1102840)\n\n\nColisión entre vehículos\n18\nNocturno\nPOINT (482787.3 1103283)\n\n\nColisión entre vehículos\n21\nNocturno\nPOINT (483592.8 1104124)\n\n\nColisión entre vehículos\n23\nNocturno\nPOINT (483354.4 1102995)"
+  },
+  {
+    "objectID": "press/press_class_01_dat_puntuales.html#escritura-de-datos",
+    "href": "press/press_class_01_dat_puntuales.html#escritura-de-datos",
+    "title": "Datos espaciales en R",
+    "section": "Escritura de datos",
+    "text": "Escritura de datos\nCondición que revisa si el archivo existe, caso contrario se escribe en disco.\n\nfileout00 <-  paste0('./datos/shp/actsp401.shp')\n\nif (!file.exists(fileout00)){\n  # save as shapefile\n  st_write(act.sp.401, \n         dsn = fileout00, \n         driver = 'ESRI Shapefile',\n         delete_layer= TRUE)\n} else {\n  cat(\"El archivo ya existe! \\n\")\n}\n\nEl archivo ya existe!"
+  },
+  {
+    "objectID": "press/press_class_01_dat_puntuales.html#muchas-gracias",
+    "href": "press/press_class_01_dat_puntuales.html#muchas-gracias",
+    "title": "Datos espaciales en R",
+    "section": "Muchas gracias",
+    "text": "Muchas gracias\n\n\n\nEscuela de Ciencias Geográficas, UNA."
+  }
+]

@@ -1,0 +1,45 @@
+project:
+  type: website
+  output-dir: docs
+
+website:
+  title: "Curso EPG2022: Introducción al Análisis Territorial en R"
+  image: ./fig/ecg_una.png
+  page-navigation: true
+  logo: ./fig/ecg_white.png
+  navbar:
+    left:
+      - href: index.qmd
+        text: Inicio
+      - text: "Presentaciones"
+        menu:
+          - ./press/press_class_introR.qmd
+      - about.qmd
+  right:
+      - icon: twitter
+        href: https://twitter.com/Sethraz
+        aria-label: Sethraz Twitter
+      - icon: github
+        href: https://github.com/sethraz/GEI-429-Teledeteccion
+        aria-label: Curso Teledetección GitHub
+
+  sidebar:
+    - id: inicio
+      title: "Contenidos"
+      style: "docked"
+      search: true
+      contents: 
+        - section: "Presentaciones"
+          contents: 
+            - ./press/press_class_introR.qmd
+            - ./press/press_class_01_dat_puntuales.qmd
+            - ./press/press_class_02_ana_puntos.qmd
+            - ./press/press_class_03_rasters.qmd
+
+format:
+  html:
+    theme: cosmo
+    css: styles.css
+    toc: true
+editor: visual
+

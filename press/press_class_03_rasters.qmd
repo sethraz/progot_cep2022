@@ -1,0 +1,220 @@
+---
+title: "Análisis de rasters"
+author: "Omar E. Barrantes Sotela"
+date: "2022-11-12"
+institute: "Escuela de Ciencias Geográficas"
+editor: visual
+format: 
+  revealjs:
+    #incremental: true
+    logo: fig/ECG-UNA.png
+    footer: "Escuela de Ciencias Geográficas, UNA."
+    slide-number: true
+    multiplex: true
+    scrollable: true
+    #theme: [simple, assets/monash.scss]
+    theme: default
+    show-slide-number: all
+    highlight-style: github
+    code-line-numbers: true
+    code-block-background: true
+    code-copy: true
+    self-contained: true
+    controls: true
+    width: 1280
+    height: 720
+    #css: [assets/syntax-highlight.css, assets/custom.css, assets/pacman.css]
+    css: [assets/custom.css, assets/pacman.css]
+lang: es
+cls: apa.cls
+bibliography: curso_ref.bib
+execute:
+  echo: true
+---
+
+## Librerias para rasters
+
+En el caso de los rasters, se utiliza las librerías `raster`, `rasterVis` y `latticeExtra`.
+
+```{r}
+#| label: librerias
+#| message: false
+#| include: true
+
+library(raster)
+library(ggplot2)
+library(rasterVis)
+library(RStoolbox)
+library(latticeExtra)
+
+```
+
+## El raster
+
+Se carga una imagen Landsat 8, previamente ajustada al área de estudio. Esto por una situación del tamaño del archivo. La imagen solo presenta las bandas del sensor OLI.
+
+```{r}
+#| label: open.raster
+#| message: false
+
+oli <- brick("./datos/ras/aoi_lc08_20190217_oli.tif")
+etm2 <- oli[[2]] # Solo banda azul
+etm3 <- oli[[3]] # Solo banda verde
+etm4 <- oli[[4]] # Solo banda roja
+```
+
+## Despliegue del raster RGB
+
+Es posible realizar una composición RGB del raster. Se prepara el código.
+
+```{r}
+#| label: plot-raster
+#| message: false
+
+plt.ras01 <- ggRGB(oli,
+                   r = 4,
+                   g = 3,
+                   b = 2,
+                   stretch = "lin",
+                   coord_equal = TRUE) +
+      labs( y = "Coordenadas métricas y", x = "Coordenadas métricas x") +
+      #labs(y = "Latitud", x = "Longitud") +
+      #coord_sf(crs = 8908) +
+      theme_bw()
+```
+
+## Visualización
+
+```{r}
+#| label: fig-raster
+#| fig-cap: "Área de estudio: Imagen Landsat 8 (UTM 16N)."
+#| fig-width: 8
+#| fig-height: 8
+#| message: false
+#| eval: true
+
+plt.ras01
+```
+
+## NDVI
+
+El índice de vegetación de diferencia normalizada (NDVI) es un conjunto calculado de valores entre uno negativo y uno positivo que indican el nivel de vegetación fotosintética. El NDVI se calcula combinando las bandas roja e infrarroja cercana mediante la siguiente fórmula:
+
+$$NDVI = \frac{(NIR - Rojo)}{(NIR + Rojo)}$$
+
+Donde: NIR: luz reflejada en el espectro infrarrojo cercano. Rojo: luz reflejada en el espectro rojo.
+
+## Rango del NDVI
+
+El rango del NDVI es de $\{-1 : 1\}$.
+
+| Valor       | Descripción                                                                      |
+|-------------|----------------------------------------------------------------------------------|
+| $0.6 : 0.8$ | Indican bosques templados y tropicales.                                          |
+| $0.2 : 0.3$ | Representan arbustos y praderas.                                                 |
+| $0.1 \leq$  | Poca vegetación, rocas, suelo desnudo.                                           |
+| $-1 : 0$    | Valores negativos indican: sin cobertura vegetal, puede ser nubes, agua o nieve. |
+
+## Cálculo del NDVI
+
+Se seleccionan solo las bandas Roja y NIR de la imagen.
+
+```{r}
+#| label: calc-ndvi
+#| message: false
+
+library(ggspatial)
+red <- oli[[4]]
+nir <- oli[[5]]
+
+ndvi <- (nir - red) / (nir + red)
+
+```
+
+## Visualización del NDVI
+
+```{r}
+#| label: fig-NDVI
+#| fig-cap: "AOI: NDVI del Landsat 8 RGB (UTM 16N)."
+#| message: false
+#| eval: true
+
+ggplot() + 
+  layer_spatial(ndvi, aes(fill = stat(band1))) +
+  scale_fill_viridis_c(na.value = NA) +
+  labs(fill = "NDVI") +
+  theme_bw()
+
+
+```
+
+## Estadísticas del raster
+
+El rango de NDVI es de -1 a +1, aunque los valores de NDVI generalmente estarán en un área pequeña en el medio del rango potencial completo de -1 a +1. Puede usar esta información para ajustar el parámetro zlim para distribuir los valores de color y hacerlos legibles.
+
+```{r}
+#| label: fig-ndvi.histo
+#| eval: true
+#| fig-cap: "Histograma del NDVI"
+#| message: false
+
+dat.ndvi <- as.data.frame(ndvi)
+#str(dat.ndvi)
+ggplot(data=dat.ndvi, aes(x= layer)) +
+  geom_histogram(binwidth = 0.05, color="darkblue", fill="lightblue") +
+  labs(x = "Valores NDVI", y = "Frecuencia" ) +
+  theme_classic()
+```
+
+## Escritura del nuevo raster NDVI
+
+Si la imagen no existe, se guarda la imagen resultante en disco.
+
+```{r}
+#| label: save.img.ndvi
+#| eval: false
+
+#Revisa si la carpeta para guardar la salida existe
+folder <- "./datos/ras/"
+if (file.exists(folder)) {
+  cat("La carpeta ya existe! \n")
+} else {
+  dir.create(folder)
+}
+
+#Revisa si el archivo raster de salida existe
+fname.ndvi <- "./datos/ras/aoi_l08_20190217_ndvi.bil"
+if (!file.exists(fname.ndvi)){
+  rgb.level <- writeRaster(ndvi, filename = fname.ndvi,
+                           datatype='FLT4S', bandorder='BIL', overwrite=TRUE)
+} else {
+  cat("El archivo raster ya existe! \n")
+}
+
+```
+
+## ¿Es posible la interactividad?
+
+Dado que el objetivo del análisis del NDVI suele ser saber qué sucede en una ubicación específica o en un conjunto de ubicaciones, puede ser útil trazar el NDVI con un mapa base que brinde un contexto geográfico a los datos:
+
+```{r}
+#| label: map-ndvi
+#| eval: true
+
+library(leaflet)
+map = leaflet()
+map = addTiles(map)
+
+palette = colorBin(c("red3", "white", "darkcyan"), values(ndvi))
+map = addRasterImage(map, ndvi, palette, opacity=0.7)
+map = addLegend(map, pal=palette, values=values(ndvi), title="NDVI")
+
+```
+
+## El mapa interactivo
+
+```{r}
+map
+```
+
+## Muchas gracias

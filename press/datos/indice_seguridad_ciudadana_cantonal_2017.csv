@@ -1,0 +1,82 @@
+cod_prov,provincia,cod_canton,canton,Delitos Contra la Propiedad,Violencia Intrafamiliar- Violencia Contra las Mujeres,Homicidios Dolosos,Índice de Seguridad Ciudadana Cantonal 2016,Nivel de Seguridad
+1,San José,101,San José,0.77,0.02,0.61,0.532,Bajo
+1,San José,102,Escazú,0.25,0,0.27,0.826,Medio Alto
+1,San José,103,Desamparados,0.16,0.02,0.29,0.845,Medio Alto
+1,San José,104,Puriscal,0.13,0.04,0,0.942,Alto
+1,San José,105,Tarrazú,0.03,0.01,0.13,0.945,Alto
+1,San José,106,Aserrí,0.1,0.04,0.18,0.892,Alto
+1,San José,107,Mora,0.12,0.03,0.08,0.926,Alto
+1,San José,108,Goicoechea,0.2,0,0.22,0.859,Alto
+1,San José,109,Santa Ana,0.14,0.02,0.12,0.907,Alto
+1,San José,110,Alajuelita,0.11,0.01,0.53,0.784,Medio Alto
+1,San José,111,Vázquez de Coronado,0.11,0,0.46,0.81,Medio Alto
+1,San José,112,Acosta,0.04,0.03,0,0.979,Alto
+1,San José,113,Tibás,0.21,0.01,0.38,0.799,Medio Alto
+1,San José,114,Moravia,0.21,0.02,0.3,0.824,Medio Alto
+1,San José,115,Montes de Oca,0.62,0,0.22,0.718,Medio Bajo
+1,San José,116,Turrubares,0.09,0.01,0,0.966,Alto
+1,San José,117,Dota,0.03,0.03,0,0.979,Alto
+1,San José,118,Curridabat,0.24,0.02,0.06,0.895,Alto
+1,San José,119,Pérez Zeledón,0.25,0.14,0.06,0.848,Medio Alto
+1,San José,120,León Cortés,0.04,0.02,0,0.982,Alto
+2,Alajuela,201,Alajuela,0.24,0.07,0.26,0.809,Medio Alto
+2,Alajuela,202,San Ramón,0.22,0.08,0.18,0.844,Medio Alto
+2,Alajuela,203,Grecia,0.09,0.05,0.08,0.93,Alto
+2,Alajuela,204,San Mateo,0.15,0.11,0,0.914,Alto
+2,Alajuela,205,Atenas,0.14,0.32,0,0.849,Medio Alto
+2,Alajuela,206,Naranjo,0.03,0.04,0.14,0.93,Alto
+2,Alajuela,207,Palmares,0.07,0.06,0.17,0.899,Alto
+2,Alajuela,208,Poás,0.12,0.08,0.35,0.817,Medio Alto
+2,Alajuela,209,Orotina,0.49,0.05,1,0.487,Bajo
+2,Alajuela,210,San Carlos,0.2,0.12,0.17,0.838,Medio Alto
+2,Alajuela,211,Zarcero,0,0.2,0.49,0.769,Medio Alto
+2,Alajuela,212,Valverde Vega,0.05,0.08,0,0.958,Alto
+2,Alajuela,213,Upala,0.26,0.19,0.18,0.789,Medio Alto
+2,Alajuela,214,Los Chiles,0.26,0.31,0.14,0.762,Medio Alto
+2,Alajuela,215,Guatuso,0.09,0.21,0.25,0.818,Medio Alto
+3,Cartago,301,Cartago,0.19,0.04,0.23,0.848,Medio Alto
+3,Cartago,302,Paraíso,0.06,0.03,0.07,0.946,Alto
+3,Cartago,303,La Unión,0.14,0.05,0.44,0.792,Medio Alto
+3,Cartago,304,Jiménez,0.1,0.04,0,0.953,Alto
+3,Cartago,305,Turrialba,0.19,0.04,0.03,0.913,Alto
+3,Cartago,306,Alvarado,0.07,0.03,0,0.968,Alto
+3,Cartago,307,Oreamuno,0.07,0.04,0.09,0.933,Alto
+3,Cartago,308,El Guarco,0.12,0.08,0.3,0.831,Medio Alto
+4,Heredia,401,Heredia,0.38,0.03,0.16,0.807,Medio Alto
+4,Heredia,402,Barva,0.15,0.02,0.05,0.929,Alto
+4,Heredia,403,Santo Domingo,0.17,0.02,0.05,0.922,Alto
+4,Heredia,404,Santa Bárbara,0.13,0.02,0.17,0.894,Alto
+4,Heredia,405,San Rafael,0.19,0.02,0.13,0.888,Alto
+4,Heredia,406,San Isidro,0.11,0.03,0.1,0.919,Alto
+4,Heredia,407,Belén,0.28,0.01,0.18,0.846,Medio Alto
+4,Heredia,408,Flores,0.19,0.03,0.09,0.896,Alto
+4,Heredia,409,San Pablo,0.14,0.03,0,0.943,Alto
+4,Heredia,410,Sarapiquí,0.2,0.03,0.42,0.785,Medio Alto
+5,Guanacaste,501,Liberia,0.44,0.45,0.47,0.549,Bajo
+5,Guanacaste,502,Nicoya,0.4,1,0.21,0.464,Bajo
+5,Guanacaste,503,Santa Cruz,0.44,0.14,0.14,0.762,Medio Alto
+5,Guanacaste,504,Bagaces,0.2,0.15,0.2,0.819,Medio Alto
+5,Guanacaste,505,Carrillo,0.19,0.29,0.37,0.717,Medio Bajo
+5,Guanacaste,506,Cañas,0.37,0.61,0.14,0.623,Medio Bajo
+5,Guanacaste,507,Abangares,0.25,0.37,0.12,0.754,Medio Alto
+5,Guanacaste,508,Tilarán,0.19,0.51,0.11,0.731,Medio Bajo
+5,Guanacaste,509,Nandayure,0.08,0.55,0,0.792,Medio Alto
+5,Guanacaste,510,La Cruz,0.18,0.46,0.89,0.493,Bajo
+5,Guanacaste,511,Hojancha,0.08,0.23,0,0.895,Alto
+6,Puntarenas,601,Puntarenas,0.3,0.08,0.31,0.772,Medio Alto
+6,Puntarenas,602,Esparza,0.16,0.02,0.25,0.85,Alto
+6,Puntarenas,603,Buenos Aires,0.19,0.49,0.04,0.759,Medio Alto
+6,Puntarenas,604,Montes de Oro,0.11,0.04,0,0.947,Alto
+6,Puntarenas,605,Osa,0.55,0.28,0,0.724,Medio Bajo
+6,Puntarenas,606,Aguirre,0.6,0.07,0.29,0.682,Medio Bajo
+6,Puntarenas,607,Golfito,0.33,0.95,0.16,0.521,Bajo
+6,Puntarenas,608,Coto Brus,0.15,0.48,0.05,0.773,Medio Alto
+6,Puntarenas,609,Parrita,0.38,0.11,0.36,0.718,Medio Bajo
+6,Puntarenas,610,Corredores,0.32,0.67,0.45,0.52,Bajo
+6,Puntarenas,611,Garabito,1,0.03,0.09,0.624,Medio Bajo
+7,Limón,701,Limón,0.28,0.01,0.88,0.613,Medio Bajo
+7,Limón,702,Pococí,0.22,0,0.57,0.736,Medio Bajo
+7,Limón,703,Siquirres,0.36,0.01,0.25,0.794,Medio Alto
+7,Limón,704,Talamanca,0.39,0.03,0.45,0.71,Medio Bajo
+7,Limón,705,Matina,0.31,0.05,0.51,0.71,Medio Bajo
+7,Limón,706,Guácimo,0.13,0,0.61,0.753,Medio Alto

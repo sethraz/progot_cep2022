@@ -1,0 +1,259 @@
+---
+title: "Datos espaciales en R"
+author: "Omar E. Barrantes Sotela"
+date: "2022-11-12"
+institute: "Escuela de Ciencias Geográficas"
+editor: visual
+format: 
+  revealjs:
+    #incremental: true
+    logo: fig/ECG-UNA.png
+    footer: "Escuela de Ciencias Geográficas, UNA."
+    slide-number: true
+    multiplex: true
+    scrollable: true
+    #theme: [simple, assets/monash.scss]
+    theme: default
+    show-slide-number: all
+    highlight-style: github
+    code-line-numbers: true
+    code-block-background: true
+    code-copy: true
+    self-contained: true
+    controls: true
+    width: 1280
+    height: 720
+    #css: [assets/syntax-highlight.css, assets/custom.css, assets/pacman.css]
+    css: [assets/custom.css, assets/pacman.css]
+lang: es
+cls: apa.cls
+bibliography: curso_ref.bib
+execute:
+  echo: true
+---
+
+## Apertura de tabla de datos
+
+En R es posible cargar una tabla de datos con múltiples variables a estas se les conoce como `data.frame()`. Es importante conocer algunos detalles de la tabla de datos.
+
+```{r}
+#| label: readtable
+#| message: false
+#| code-line-numbers: "1-6"
+accidentes <- read.csv("./datos/COSEVI_accidentes_complete.csv",
+                       fileEncoding="utf8",
+                       sep = ",", # Separador de campos
+                       dec = ".", # Simbolo decimal
+                       header = TRUE, # Tabla tiene encabezados?
+                       na.strings = "NA") 
+```
+
+## Librerias para datos espaciales
+
+En R es posible abrir diversos tipos de datos espaciales. Primero se va a cargar las siguientes librerías:
+
+```{r}
+#| label: librerias
+#| message: false
+library(sf)
+library(sp)
+library(rgdal)
+#Otras librerias
+library(tidyverse)
+library(ggplot2)
+
+```
+
+## Datos puntuales referenciados
+
+Los datos corresponden a una locación específica (p.e., latitud-longitud; x-y). Pueden ser sitios, eventos, etc. En este caso se usará la tabla de datos de accidentes de tránsito en el Cantón de Heredia.
+
+```{r}
+#| label: dataframe_to_sf
+#| message: false
+act.sp <- sf::st_as_sf(accidentes,
+                       coords = c("NX_WGS84","NY_WGS84"))
+st_crs(act.sp) <- 4326 # WGS84 EPSG code 4326
+
+```
+
+## Polígonos
+
+En este caso podemos cargar los datos `shapefile` con los límites de distrito de Costa Rica, y descargados del SNIT, y emplear solo un subconjunto de estos. En este caso solo interesa los distritos en la GAM de Heredia (por lo que se excluye el distrito Vara Blanca).
+
+```{r}
+#| label: shapefile_distritos
+#| message: false
+
+dist <- read_sf("./datos/shp/IGN_5_limitedistrital_5k_2021.shp")
+heredia <- subset(dist,
+                  canton == "Heredia" & codigo_dta < 40105)
+```
+
+## Operaciones básicas entre datos espaciales
+
+Es posible realizar operaciones como una intersección entre capas vectoriales.
+
+```{r}
+#| label: intersecc
+#| message: false
+
+proj.dat <- sf::st_crs(act.sp)
+if (proj.dat$input != "EPSG:8908"){
+  act.sp <- st_transform(act.sp,8908)  # Proyecta al CR-SIRGAS
+}
+act.sp.401 <- st_intersection(act.sp, heredia)
+#st_crs(heredia)
+
+```
+
+::: callout-caution
+## Importante
+
+En caso de que las capas presenten diferentes proyecciones, se utiliza la condicional `if` para verificar esa condición, y proyectar la capa de interés en caso de que no cumpla ese criterio.
+:::
+
+## Visualización básica
+
+Se crea un mapa básico con los accidentes de tránsito en el Cantón de Heredia y se asigna a una variable para incluso agregar más elementos.
+
+```{r}
+#| label: var-mapa
+#| message: false
+#| code-line-numbers: "5-9"
+#| 
+library(ggforce)
+library(ggspatial)
+library(showtext)
+
+plt01 <- ggplot()+
+  annotation_spatial(heredia)+
+  layer_spatial(act.sp.401, aes(col= CodAcc2)) +
+  labs(colour="Tipo") +
+  theme_bw()
+
+```
+
+## Heredia: Mapa de accidentes
+
+```{r}
+#| label: fig-mapa-acc401
+#| fig-cap: "Heredia: Accidentes de tránsito por tipo"
+
+plt01
+
+```
+
+## Agrupación de datos
+
+Es posible usar una estrategia de agrupación de los accidentes por medio de K Medias, según la variable total de involucrados:
+
+```{r}
+#| label: ana.cluster
+#| message: false
+
+library(cluster)
+
+acc.clus01 <- kmeans(c(act.sp.401$hora),
+                     4, # Cantidad de grupos
+                     nstart = 20 # Mínimo de elementos en los grupos
+                     )
+acc.clus01
+
+```
+
+## Proceso de clasificación
+
+Es posible realizar una visualización de la agrupación, junto con otras variables. En este caso Hora del accidente con respecto al Total de Involucrados.
+
+```{r}
+#| label: clus-plot
+#| message: false
+#| fig-cap: "Heredia: Agrupación de accidentes por Hora y Total de Involucrados"
+
+clus <- as.data.frame(st_drop_geometry(act.sp.401[,c("hora","Total_Involucrados")]))
+clusplot(clus[,c("hora","Total_Involucrados")], 
+         acc.clus01$cluster,
+         color = TRUE,
+         shade = TRUE,
+         labels = 2,
+         lines = 0,
+         main = "")
+
+```
+
+## Clasificación en la tabla de datos
+
+El resultado de un proceso de agrupación posibilita la elaboración de cartografía temática. En este caso se construyen niveles en la categoría.
+
+```{r}
+act.sp.401$cat_hora <- as.factor(acc.clus01$cluster)
+levels(act.sp.401$cat_hora) <- c("Madrugada",
+                                 "Matutino",
+                                 "Vespertino",
+                                 "Nocturno")
+
+```
+
+## Visualización del resultado de la agrupación.
+
+```{r}
+#| label: var-mapa02
+#| message: false
+
+plt02 <- ggplot()+
+  annotation_spatial(heredia)+
+  layer_spatial(act.sp.401, aes(col= cat_hora)) +
+  labs(colour="Tipo Hora") +
+  theme_bw()
+
+```
+
+## Heredia: Mapa de accidentes por horario
+
+```{r}
+#| label: fig-mapa-acc402-hora
+#| fig-cap: "Heredia: Accidentes de tránsito agrupado por horario"
+plt02
+```
+
+## Selección por atributo
+
+Es posible solo obtener los datos de accidentes agrupados como nocturno y generar una tabla.
+
+```{r}
+#| label: tbl-act.noct
+#| tbl-cap: "Accidentes Nocturnos"
+#| tbl-colwidths: [60,40]
+#| code-line-numbers: "2-3"
+
+library(knitr)
+act.sp.401.noct <-  act.sp.401 %>% 
+  filter(cat_hora == "Nocturno")
+kable(head(act.sp.401.noct[,c("CodAcc2","hora","cat_hora")]))
+```
+
+## Escritura de datos
+
+Condición que revisa si el archivo existe, caso contrario se escribe en disco.
+
+```{r}
+#| label: datos.escritura
+#| message: false
+
+fileout00 <-  paste0('./datos/shp/actsp401.shp')
+
+if (!file.exists(fileout00)){
+  # save as shapefile
+  st_write(act.sp.401, 
+         dsn = fileout00, 
+         driver = 'ESRI Shapefile',
+         delete_layer= TRUE)
+} else {
+  cat("El archivo ya existe! \n")
+}
+
+
+```
+
+## Muchas gracias

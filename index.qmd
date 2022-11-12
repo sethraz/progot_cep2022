@@ -1,0 +1,38 @@
+---
+pagetitle: "PROGOT: Introducción al Análisis Territorial"
+page-layout: article
+anchor-sections: false
+author: "Omar E. Barrantes Sotela"
+lang: es
+toc: true
+css: index.css
+editor: source
+title: "Introducción al Análisis Territorial en R"
+listing:
+  contents: contenidos.yml
+description: |
+  Curso básico e introductorio al análisis territorial mediante R, como una herramienta que permite la colaboración y el desarrollo de investigaciones con enfoque de "Ciencia Abierta".
+image: ./fig/ecg_white.png
+---
+
+# Introducción al Análisis Territorial en R
+
+::: hero-banner
+![](./fig/DJI_0109_1600x584.jpg){fig-align="center" width="1600"}
+:::
+
+::: content-block
+## Descripción del curso
+
+El curso pretende introducir al participante en el conocimiento de principios básicos del análisis territorial mediante el manejo y análisis de datos espaciales obtenidos por diferentes medios 
+
+## Objetivos
+
+-   Dotar al estudiante conocimientos básicos en el manejo de datos en el programa R.
+
+### Objetivos específicos
+
+-   Introducir los conceptos elementales de la ciencia abierta 
+-   Aplicar metodologías y técnicas apropiadas en el tratamiento de datos espaciales, para la obtención de productos cartográficos de una forma eficiente.
+-   Analizar las limitaciones de que tiene el uso de programas tradicionales SIG e incluso el mismo R.
+:::

@@ -1,0 +1,106 @@
+---
+title: "Introducción a R"
+author: "Omar E. Barrantes Sotela"
+institute: "Escuela de Ciencias Geográficas"
+editor: visual
+format: 
+  revealjs:
+    #incremental: true
+    logo: fig/ECG-UNA.png
+    footer: "Escuela de Ciencias Geográficas, UNA."
+    slide-number: true
+    multiplex: true
+    scrollable: true
+    theme: default
+    show-slide-number: all
+    self-contained: true
+    controls: true
+    width: 1280
+    height: 720
+    #css: [assets/syntax-highlight.css, assets/custom.css, assets/pacman.css]
+    css: [assets/custom.css, assets/pacman.css]
+cls: apa.cls
+bibliography: curso_ref.bib
+execute:
+  echo: true
+---
+
+## La "Ciencia abierta"
+
+Es la práctica de la ciencia de tal manera que otros pueden colaborar y contribuir.
+
+![Comunidades de investigación](fig/research-communities.jpg)
+
+## ¿Qué es R?
+
+R es un programa libre para computación estadística y gráficos [@R2022].
+
+## ¿Por qué usar R?
+
+::: columns
+::: {.column width="50%"}
+-   Métodos reproducibles y replicables.
+
+-   Es abierto y libre.
+
+-   Gran comunidad.
+
+-   Forma parte de un gran ecosistema.\
+:::
+
+::: {.column width="50%"}
+![Opciones que ofrece la reproducibilidad. Fuente: [Foster Open Science](https://book.fosteropenscience.eu/en/).](fig/reproducibledefinitiongrid.svg)
+:::
+:::
+
+## Las librerías
+
+Una de las mayores virtudes de R es la enorme comunidad de desarrollo que ha creado funcionalidades (**funciones**) para simplificar el trabajo a otras personas. La estructura que almacena funciones se conoce como **librería** o **paquete**.
+
+Existen dos tipos de librerías en R:
+
+-   **Librerías base**: Incorporadas en la instalación básica.
+-   **Librerías por contribución**: Creadas por usuarios y responden a sus necesidades. Estos necesitan ser descargados y cargados.
+
+## ¿Dónde se consiguen las librerías?
+
+-   [**CRAN**](https://cloud.r-project.org/) (de *Comprehensive R Archive Network* en inglés), el repositorio oficial de R. Solo los paquetes aprobados y con soporte de fallos constante son publicados aquí.
+
+-   **GitHub**, el repositorio más grande no oficial en el que se pueden encontrar paquetes de R. Muchos repositorios en CRAN mantienen versiones beta en GitHub para su prueba antes de ser publicados.
+
+## ¿Cómo citar una librería?
+
+Es muy fácil citar una librería. La forma más fácil es mediante el comando `citation()`. Por ejemplo, para citar el programa R.
+
+```{r}
+citation()
+```
+
+## Librerías para el Análisis espacial
+
+En mi opinión, las principales librerías para el manejo de datos espaciales son:
+
+-   Rgdal
+-   sf
+-   sp
+-   gstats
+-   raster
+
+Aunque existen, muchas otras más ....
+
+## Los Editores
+
+R en realidad mantiene una consola GUI (*graphical user interface*) básica. Para mejorar la interacción con los usuarios, es común el uso de editores, también conocidos como IDEs (Source code editor).
+
+El más utilizado es [RStudio IDE](https://posit.co/downloads/).
+
+## Sobre el taller
+
+Este taller es de carácter introductorio, y se espera abordar:
+
+-   uso básico de [Quarto](https://quarto.org),
+-   apertura de tablas de datos, datos espaciales: (puntos, líneas, polígonos y rasters)
+-   Tratamiento básico datos espaciales,
+-   visualización básica
+
+## Referencias

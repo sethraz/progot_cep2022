@@ -1,0 +1,66 @@
+---
+title: "Geóg. Omar E. Barrantes Sotela, M.Sc."
+about:
+  template: trestles
+  image: ./fig/me.jpg
+  links:
+    - icon: twitter
+      text: twitter
+      href: https://twitter.com/Sethraz
+    - icon: github
+      text: Github
+      href: https://github.com/sethraz
+---
+
+Prof. Omar E. Barrantes Sotela es académico de la Escuela de Ciencias Geográficas desde el 2010. Participante del Programa para la Promoción y Gestión del Ordenamiento Territorial (PROGOT) y coordinador de la Actividad Permanente de Asesorías y Capacitación de la Gestión Territorial.
+
+## Educación
+
+Universidad Nacional, Heredia \| Heredia, Costa Rica. Bachiller en Ciencias Geográficas con énfasis en Ordenamiento Territorial \| 2009.
+
+Universidad Nacional, Heredia \| Heredia, Costa Rica. Licenciatura en Ciencias Geográficas con énfasis en Ordenamiento Territorial (*Magna Cum Laude*) \| 2012.
+
+Universidad de Costa Rica, San Ramón \| Alajuela, Costa Rica. Maestría Académica en Desarrollo Sostenible con énfasis en Conservación de los Recursos Biológicos (*Mención de honor*) \| 2020.
+
+## Experiencia
+
+### Enseñanza Superior Universitaria (2013-presente)
+
+Académico de la Universidad Nacional (UNA) - Escuela de Ciencias Geográficas (ECG-UNA). \| Cursos: - Métodos cuantitativos y modelos en Geografía, - Geoestadística II, - Cartografía, - Cartografía Digital y - Teledetección.
+
+### Programas Académicos
+
+Programa para la Promoción de la Gestión y el Ordenamiento del Territorio (Fase II) (2021-2025). Código: 0082-20.\|\| Programa para la Promoción de la Gestión y el Ordenamiento del Territorio (2016-2020). Código: 0315-14.
+
+### Proyectos de Investigación
+
+**Investigador responsable**
+
+-   Asesorías y capacitación en la gestión municipal para el ordenamiento del territorio. (2021 - 2023). Código: 0150-20.
+-   Clima urbano y variabilidad climática en la planificación urbana. Estudio de caso en los centros urbanos de Alajuela y Heredia, Costa Rica. (2016 - 2018). Código: 0384-15.
+
+**Investigador participante**
+
+-   Desarrollo de estrategias y capacidades en adaptación al cambio climático en centros urbanos: caso de estudio Ciudad de San José. (2021-2023). Código (0598-19).
+
+-   Asesorías y capacitación en la gestión municipal para el ordenamiento del territorio. (2016 - 2021). Código: 0434-15.
+
+-   Red de gestión del riesgo y cambio climático. (2017 - 2019). Código 0508-16.
+
+-   Sistematización y seguimiento de las experiencias de ordenamiento territorial y planes reguladores en la Escuela de Ciencias Geográficas. (2012 - 2015). Código: 0372-12.
+
+-   Observatorio Ambiental - Dimensión: Ordenamiento Territorial. (2010).
+
+### Proyectos de Vinculación Externa
+
+-   Estudios de Planificación y Ordenamiento del Territorio: Upala. Código: 0092-21. (2021 - 2023).
+-   Actualización del Plan Regulador del Cantón de Poás, integrando la variable ambiental. Código: 0302-14. (2016 - 2021).
+-   Ordenamiento Territorial: Formulación y Evaluación de Planes Reguladores - Plan Regulador de Upala y Guatuso. (2014).
+-   Ordenamiento Territorial: Formulación y Evaluación de Planes Reguladores - Plan Regulador Los Chiles. (2014).
+
+## Afiliaciones
+
+-   Colegio de Profesionales en Geografía de Costa Rica. No.: CPG-0050.
+-   SETENA. Consultor Ambiental No.: CI-033-11.
+-   Instituto Panamericano de Geografía e Historia - IPGH}. Miembro.
+-   American Association of Geographers}. Miembro.

@@ -1,0 +1,14 @@
+  
+- title: Contenidos teóricos
+  subtitle: Aspectos generales
+  links:
+- title: Presentaciones
+  links:
+    - text: Introdución a R
+      href: ../press/press_class_introR.qmd
+    - text: Datos espaciales en R
+      href: ../press/press_class_01_dat_puntuales.qmd
+    - text: Análisis de datos puntuales en R
+      href: ../press/press_class_02_ana_puntos.qmd
+    - text: Análisis de rasters
+      href: ../press/press_class_03_rasters.qmd

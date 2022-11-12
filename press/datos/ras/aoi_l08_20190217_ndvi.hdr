@@ -1,0 +1,25 @@
+NROWS           367 
+NCOLS           296 
+NBANDS          1 
+NBITS           32 
+BYTEORDER       I 
+PIXELTYPE       FLOAT 
+LAYOUT          BIL 
+SKIPBYTES       0
+ULXMAP          843360 
+ULYMAP          1090440 
+XDIM            30 
+YDIM            30 
+BANDROWBYTES    1184 
+TOTALROWBYTES   1184 
+BANDGAPBYTES    0
+NODATA          -3.4e+38 
+
+
+The below is additional metadata, not part of the BIL/HDR format
+----------------------------------------------------------------
+CREATOR=R package:x
+CREATED= 2022-11-11 23:34:48 
+Projection= +proj=utm +zone=16 +datum=WGS84 +units=m +no_defs 
+MinValue= -0.174991 
+MaxValue= 0.5939845 

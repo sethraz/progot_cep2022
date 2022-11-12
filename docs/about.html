@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-0.9.612">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Curso EPG2022: Introducción al Análisis Territorial en R - Geóg. Omar E. Barrantes Sotela, M.Sc.</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="nav-sidebar docked nav-fixed fullcontent">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">Curso EPG2022: Introducción al Análisis Territorial en R</span>
+  </a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="./index.html">Inicio</a>
+  </li>  
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-presentaciones" role="button" data-bs-toggle="dropdown" aria-expanded="false">Presentaciones</a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-presentaciones">    
+        <li>
+    <a class="dropdown-item" href="./press/press_class_introR.html">
+ <span class="dropdown-text">Introducción a R</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link active" href="./about.html" aria-current="page">Geóg. Omar E. Barrantes Sotela, M.Sc.</a>
+  </li>  
+</ul>
+              <div id="quarto-search" class="" title="Search"></div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+    <div class="container-fluid d-flex justify-content-between">
+      <h1 class="quarto-secondary-nav-title">Geóg. Omar E. Barrantes Sotela, M.Sc.</h1>
+      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation docked overflow-auto">
+      <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+      </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item sidebar-item-section">
+    <div class="sidebar-item-container"> 
+        <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">Presentaciones</a>
+      <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+        <i class="bi bi-chevron-right ms-2"></i>
+      </a>
+    </div>
+    <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./press/press_class_introR.html" class="sidebar-item-text sidebar-link">Introducción a R</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./press/press_class_01_dat_puntuales.html" class="sidebar-item-text sidebar-link">Datos espaciales en R</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./press/press_class_02_ana_puntos.html" class="sidebar-item-text sidebar-link">Análisis de puntos</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./press/press_class_03_rasters.html" class="sidebar-item-text sidebar-link">Análisis de rasters</a>
+  </div>
+</li>
+    </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<!-- margin-sidebar -->
+    
+<!-- main -->
+<div class="quarto-about-trestles">
+  <div class="about-entity">
+    <img src="./fig/me.jpg" class="about-image
+  rounded " style="width: 20em;">
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title d-none d-lg-block">Geóg. Omar E. Barrantes Sotela, M.Sc.</h1>
+</div>
+<div class="quarto-title-meta">
+  </div>
+</header>
+    <div class="about-links">
+  <a href="https://twitter.com/Sethraz" class="about-link">
+    <i class="bi bi-twitter"></i>
+     <span class="about-link-text">twitter</span>
+  </a>
+  <a href="https://github.com/sethraz" class="about-link">
+    <i class="bi bi-github"></i>
+     <span class="about-link-text">Github</span>
+  </a>
+</div>
+  </div>
+  <div class="about-contents"><main class="content" id="quarto-document-content">
+<p>Prof.&nbsp;Omar E. Barrantes Sotela es académico de la Escuela de Ciencias Geográficas desde el 2010. Participante del Programa para la Promoción y Gestión del Ordenamiento Territorial (PROGOT) y coordinador de la Actividad Permanente de Asesorías y Capacitación de la Gestión Territorial.</p>
+<section id="educación" class="level2">
+<h2 data-anchor-id="educación">Educación</h2>
+<p>Universidad Nacional, Heredia | Heredia, Costa Rica. Bachiller en Ciencias Geográficas con énfasis en Ordenamiento Territorial | 2009.</p>
+<p>Universidad Nacional, Heredia | Heredia, Costa Rica. Licenciatura en Ciencias Geográficas con énfasis en Ordenamiento Territorial (<em>Magna Cum Laude</em>) | 2012.</p>
+<p>Universidad de Costa Rica, San Ramón | Alajuela, Costa Rica. Maestría Académica en Desarrollo Sostenible con énfasis en Conservación de los Recursos Biológicos (<em>Mención de honor</em>) | 2020.</p>
+</section>
+<section id="experiencia" class="level2">
+<h2 data-anchor-id="experiencia">Experiencia</h2>
+<section id="enseñanza-superior-universitaria-2013-presente" class="level3">
+<h3 data-anchor-id="enseñanza-superior-universitaria-2013-presente">Enseñanza Superior Universitaria (2013-presente)</h3>
+<p>Académico de la Universidad Nacional (UNA) - Escuela de Ciencias Geográficas (ECG-UNA). | Cursos: - Métodos cuantitativos y modelos en Geografía, - Geoestadística II, - Cartografía, - Cartografía Digital y - Teledetección.</p>
+</section>
+<section id="programas-académicos" class="level3">
+<h3 data-anchor-id="programas-académicos">Programas Académicos</h3>
+<p>Programa para la Promoción de la Gestión y el Ordenamiento del Territorio (Fase II) (2021-2025). Código: 0082-20.|| Programa para la Promoción de la Gestión y el Ordenamiento del Territorio (2016-2020). Código: 0315-14.</p>
+</section>
+<section id="proyectos-de-investigación" class="level3">
+<h3 data-anchor-id="proyectos-de-investigación">Proyectos de Investigación</h3>
+<p><strong>Investigador responsable</strong></p>
+<ul>
+<li>Asesorías y capacitación en la gestión municipal para el ordenamiento del territorio. (2021 - 2023). Código: 0150-20.</li>
+<li>Clima urbano y variabilidad climática en la planificación urbana. Estudio de caso en los centros urbanos de Alajuela y Heredia, Costa Rica. (2016 - 2018). Código: 0384-15.</li>
+</ul>
+<p><strong>Investigador participante</strong></p>
+<ul>
+<li><p>Desarrollo de estrategias y capacidades en adaptación al cambio climático en centros urbanos: caso de estudio Ciudad de San José. (2021-2023). Código (0598-19).</p></li>
+<li><p>Asesorías y capacitación en la gestión municipal para el ordenamiento del territorio. (2016 - 2021). Código: 0434-15.</p></li>
+<li><p>Red de gestión del riesgo y cambio climático. (2017 - 2019). Código 0508-16.</p></li>
+<li><p>Sistematización y seguimiento de las experiencias de ordenamiento territorial y planes reguladores en la Escuela de Ciencias Geográficas. (2012 - 2015). Código: 0372-12.</p></li>
+<li><p>Observatorio Ambiental - Dimensión: Ordenamiento Territorial. (2010).</p></li>
+</ul>
+</section>
+<section id="proyectos-de-vinculación-externa" class="level3">
+<h3 data-anchor-id="proyectos-de-vinculación-externa">Proyectos de Vinculación Externa</h3>
+<ul>
+<li>Estudios de Planificación y Ordenamiento del Territorio: Upala. Código: 0092-21. (2021 - 2023).</li>
+<li>Actualización del Plan Regulador del Cantón de Poás, integrando la variable ambiental. Código: 0302-14. (2016 - 2021).</li>
+<li>Ordenamiento Territorial: Formulación y Evaluación de Planes Reguladores - Plan Regulador de Upala y Guatuso. (2014).</li>
+<li>Ordenamiento Territorial: Formulación y Evaluación de Planes Reguladores - Plan Regulador Los Chiles. (2014).</li>
+</ul>
+</section>
+</section>
+<section id="afiliaciones" class="level2">
+<h2 data-anchor-id="afiliaciones">Afiliaciones</h2>
+<ul>
+<li>Colegio de Profesionales en Geografía de Costa Rica. No.: CPG-0050.</li>
+<li>SETENA. Consultor Ambiental No.: CI-033-11.</li>
+<li>Instituto Panamericano de Geografía e Historia - IPGH}. Miembro.</li>
+<li>American Association of Geographers}. Miembro.</li>
+</ul>
+
+
+</section>
+</main></div>
+</div>
+ <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    setTimeout(function() {
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      let href = ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
+    tippyHover(ref, function() {
+      var popup = window.document.createElement('div');
+      cites.forEach(function(cite) {
+        var citeDiv = window.document.createElement('div');
+        citeDiv.classList.add('hanging-indent');
+        citeDiv.classList.add('csl-entry');
+        var biblioDiv = window.document.getElementById('ref-' + cite);
+        if (biblioDiv) {
+          citeDiv.innerHTML = biblioDiv.innerHTML;
+        }
+        popup.appendChild(citeDiv);
+      });
+      return popup.innerHTML;
+    });
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

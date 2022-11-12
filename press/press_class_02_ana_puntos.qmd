@@ -1,0 +1,256 @@
+---
+title: "Análisis de puntos"
+author: "Omar E. Barrantes Sotela"
+date: "2022-11-12"
+institute: "Escuela de Ciencias Geográficas"
+editor: visual
+format: 
+  revealjs:
+    #incremental: true
+    logo: fig/ECG-UNA.png
+    footer: "Escuela de Ciencias Geográficas, UNA."
+    slide-number: true
+    multiplex: true
+    scrollable: true
+    #theme: [simple, assets/monash.scss]
+    theme: default
+    show-slide-number: all
+    highlight-style: github
+    code-line-numbers: true
+    code-block-background: true
+    code-copy: true
+    self-contained: true
+    controls: true
+    width: 1280
+    height: 720
+    #css: [assets/syntax-highlight.css, assets/custom.css, assets/pacman.css]
+    css: [assets/custom.css, assets/pacman.css]
+lang: es
+cls: apa.cls
+bibliography: curso_ref.bib
+execute:
+  echo: true
+---
+
+## Apertura de datos
+
+Se cargan los datos previamente guardados de accidentes de tránsito en Heredia. Recuerde cargar las librerías `sf`, `sp` y `rgdal`.
+
+```{r}
+#| label: librerias
+#| message: false
+#| include: false
+
+library(sf)
+library(sp)
+library(rgdal)
+#Otras librerias
+library(tidyverse)
+library(ggplot2)
+options(scipen = 999)
+```
+
+```{r}
+#| label: open_sf
+#| message: false
+act.sp.401 <- read_sf("./datos/shp/actsp401.shp")
+
+```
+
+# Ventana de observación
+
+En spatstat, la función *owin* se utiliza para configurar la ventana de observación. Sin embargo, la función estándar toma las coordenadas de un rectángulo o de un polígono de una matriz, y por lo tanto puede ser un poco difícil de usar.
+
+# Ventana de observación
+
+Afortunadamente, el paquete maptools proporciona una manera de transformar un SpatialPolygons en un objeto de la clase owin, usando la función como `.owin` (Nota: una función con el mismo nombre también está disponible en `spatstat` pero no funciona con SpatialPolygons, así que asegúrese de cargar la libreria **maptools**):
+
+```{r}
+library(maptools)
+library(ggspatial)
+library(spatstat)
+
+dist <- read_sf("./datos/shp/IGN_5_limitedistrital_5k_2021.shp")
+heredia <- subset(dist,
+                  canton == "Heredia" & codigo_dta < 40105)
+window <- as.owin(heredia)
+```
+
+## Objeto de patrón de puntos
+
+Ahora podemos usar la función ppp, en spatstat, para crear el objeto de patrón de puntos:
+
+::: columns
+::: {.column width="50%"}
+```{r}
+acc.ppp <- ppp(x=st_coordinates(act.sp.401)[,1],
+               y=st_coordinates(act.sp.401)[,2],
+               window=window)
+```
+:::
+
+::: {.column width="50%"}
+```{r}
+#| label: fig-obj-pp
+#| message: false
+#| fig-cap: "Objeto puntos de accidentes de tránsito."
+#| echo: false
+plot(acc.ppp)
+```
+:::
+:::
+
+## Intensidad y densidad
+
+Una información crucial que necesitamos cuando tratamos con patrones de puntos es una definición cuantitativa de la distribución espacial, es decir, cuántos eventos tenemos en una ventana predefinida. El índice para definir esto es la Intensidad, que es el número promedio de eventos por unidad de área.
+
+Podemos calcular la intensidad de la siguiente manera:
+
+```{r intensidad}
+acc.ppp$n/sum(st_area(heredia))
+```
+
+## Dato de intensidad
+
+El numerador es el número de punto en el objeto ppp; mientras que el denominador es la suma de las áreas de todos los polígonos. En Heredia, la intensidad promedio de accidentes es de `r round(acc.ppp$n/(sum(st_area(heredia))/1000000),4)` por kilómetro cuadrado.
+
+## Observación
+
+La intensidad puede ser constante a lo largo de la ventana de estudio, en ese caso, en cada metro cuadrado encontraríamos el mismo número de puntos, y el proceso sería uniforme o homogéneo. La mayoría de las veces, la intensidad no es constante y varía espacialmente a lo largo de la ventana del estudio, en ese caso el proceso no es homogéneo. Para procesos no homogéneos necesitamos una forma de determinar la cantidad de variación espacial de la intensidad.
+
+## Conteo de cuadrantes
+
+Hay varias formas de tratar este problema, un ejemplo es el conteo de cuadrantes, donde el área se divide en rectángulos y se cuenta el número de eventos en cada uno de ellos:
+
+```{r}
+plot(acc.ppp,pch="+",cex=0.5,
+     main="Heredia: Accidentes de tránsito")
+plot(quadratcount(acc.ppp, nx = 4, ny = 4), add=T,col="blue")
+```
+
+## Accidentes por distrito
+
+Esta función es buena para ciertos conjuntos de datos, pero en este caso realmente no tiene sentido usar el recuento de cuadrantes, ya que las áreas que crea no tienen ningún significado en la realidad. Por ejemplo, sería mucho más valioso extraer el número de accidentes por distrito. Para hacer esto necesitamos usar un bucle e iterar a través de los polígonos:
+
+```{r intensidad_distrito}
+
+Local.Intensidad <- data.frame(heredia=factor(),Number=numeric())
+for(i in unique(heredia$distrito)){
+  sub.pol <- heredia[heredia$distrito==i,]
+  z=data.frame(cbind(x=acc.ppp$x, y= acc.ppp$y))
+  coordinates(z)<-c("x","y")
+  sub.ppp <- ppp(x=z$x, y=z$y,window=as.owin(sub.pol))
+  Local.Intensidad <- rbind(Local.Intensidad,
+                            data.frame(heredia=factor(i,
+                                                      levels=heredia$distrito),
+                                       Number=sub.ppp$n))
+}
+
+```
+
+## Frecuencia
+
+Se establecen las frecuencias de los accidentes por distrito.
+
+```{r freq_intensidad}
+summary(Local.Intensidad)
+sum(Local.Intensidad$Number)
+```
+
+## Código de Gráfico de frecuencia
+
+```{r graf_intensidad}
+#| label: code-frec-distrito
+#| message: false
+library(plotrix)
+colorScale <- color.scale(Local.Intensidad[order(Local.Intensidad[,2]),2],
+                          color.spec="rgb",
+                          extremes=c("green","red"),alpha=0.8)
+
+df_sorted <- Local.Intensidad %>% arrange(desc(Number))
+
+p<-ggplot(data=df_sorted, aes(x=heredia, y=Number)) +
+  geom_col(aes(color = heredia), fill = "white")+
+  scale_fill_manual(colorScale) +
+  geom_text(aes(label = Number), vjust = -0.3) +
+  theme_minimal()
+```
+
+## Gráfico de frecuencia
+
+```{r}
+#| label: fig-frec-distrito
+#| message: false
+#| fig-cap: "Heredia: Frecuencia de accidentes de tránsito por distrito."
+
+p
+  
+```
+
+## Densidad de Kernel
+
+Otra forma en la que podemos determinar la distribución espacial de la intensidad es mediante el uso del suavizado del kernel [@Diggle1990; @Berman1986; @Berman1989; @Bivand2013]. Dicho método calcula la intensidad de forma continua en toda el área de estudio. Para realizar este análisis en R necesitamos definir el ancho de banda de la estimación de densidad, que básicamente determina el área de influencia de la estimación. No hay una regla general para determinar el ancho de banda correcto.
+
+## Densidad de Kernel
+
+En general, si *h* es demasiado pequeño, la estimación es demasiado ruidosa, mientras que si *h* es demasiado alta, la estimación puede pasar por alto elementos cruciales del patrón de puntos debido a exceso de suavisado [@Scott2009]. En **spatstat**, las funciones *bw.diggle, bw.ppl y bw.scott* se pueden usar para estimar el ancho de banda según los métodos de diferencia. Podemos probar cómo funcionan con nuestro conjunto de datos utilizando el siguiente código:
+
+## Densidad de Kernel 01
+
+```{r}
+#| label: fig-densidad-distrito01
+#| message: false
+#| fig-cap: "Heredia: Densidad de accidentes de tránsito por distrito."
+
+
+plot(density.ppp(acc.ppp, 
+                 sigma = bw.diggle(acc.ppp),edge=T),
+     main=paste("h =", round(bw.diggle(acc.ppp),2)))
+
+```
+
+## Densidad de Kernel 02
+
+```{r}
+#| label: fig-densidad-distrito02
+#| message: false
+#| fig-cap: "Heredia: Densidad de accidentes de tránsito por distrito."
+
+
+plot(density.ppp(acc.ppp, 
+                 sigma = bw.ppl(acc.ppp), edge=T),
+     main=paste("h =", round(bw.ppl(acc.ppp),2)))
+
+```
+
+## Densidad de Kernel 03
+
+```{r}
+#| label: fig-densidad-distrito03
+#| message: false
+#| fig-cap: "Heredia: Densidad de accidentes de tránsito por distrito."
+
+
+plot(density.ppp(acc.ppp, 
+                 sigma = bw.scott(acc.ppp)[2], edge=T),
+     main=paste("h =", round(bw.scott(acc.ppp)[2],2)))
+
+```
+
+## Densidad de Kernel 04
+
+```{r}
+#| label: fig-densidad-distrito04
+#| message: false
+#| fig-cap: "Heredia: Densidad de accidentes de tránsito por distrito."
+
+
+plot(density.ppp(acc.ppp, 
+                 sigma = bw.scott(acc.ppp)[1],edge=T),
+     main=paste("h =", round(bw.scott(acc.ppp)[1],2)))
+
+```
+
+## Muchas gracias
+
+## Referencias
